@@ -63,25 +63,3 @@ export const useAddContacts = () => {
 
   return { contact: addContact };
 };
-
-// export const useAddContacts = () => {
-//   const contacts = useSelector(getContacts);
-//   const dispatch = useDispatch();
-
-//   const handleSubmit = (values, { resetForm }) => {
-//     values.id = nanoid();
-//     const nameNormalized = values.name.toLowerCase();
-//     const uniqueName = contacts.find(
-//       contact => contact.name.toLowerCase() === nameNormalized
-//     );
-
-//     if (uniqueName) {
-//       alert(`${values.name} is already in contacts`);
-//     } else {
-//       dispatch(addContacts(values));
-//     }
-
-//     resetForm();
-//   };
-//   return { submitForm: handleSubmit };
-// };
