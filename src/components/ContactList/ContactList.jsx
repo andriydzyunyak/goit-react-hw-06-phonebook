@@ -1,8 +1,11 @@
 import PropTypes from 'prop-types';
 import { ContactItem } from 'components/ContactItem/ContactItem';
 import { ContactBook } from 'components/ContactList/ContactList.styled';
+import { useDispatch } from 'react-redux';
+import { deleteContacts } from 'redux/store';
 
-export const ContactList = ({ contacts, onDeleteContact }) => {
+export const ContactList = ({ contacts }) => {
+  const dispatch = useDispatch();
   return (
     <ContactBook>
       {contacts.map(({ id, name, number }) => (
@@ -11,7 +14,7 @@ export const ContactList = ({ contacts, onDeleteContact }) => {
           id={id}
           name={name}
           number={number}
-          onDelete={() => onDeleteContact(id)}
+          onDelete={() => dispatch(deleteContacts(id))}
         />
       ))}
     </ContactBook>
@@ -26,5 +29,4 @@ ContactList.propTypes = {
       number: PropTypes.string.isRequired,
     })
   ),
-  onDeleteContact: PropTypes.func.isRequired,
 };

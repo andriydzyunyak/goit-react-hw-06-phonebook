@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addContacts, deleteContacts, filterContacts } from '../redux/store';
-import { nanoid } from 'nanoid';
+import { filterContacts } from '../redux/store';
 import { ContactForm } from 'components/ContactForm/ContactForm';
 import { ContactList } from 'components/ContactList/ContactList';
 import { Filter } from 'components/Filter/Filter';
@@ -14,7 +12,6 @@ import {
 export const App = () => {
   const filter = useSelector(state => state.contacts.filter);
   const contacts = useSelector(state => state.contacts.items);
-  console.log(contacts);
   const dispatch = useDispatch();
 
   // const [contacts, setContacts] = useState(() => {
@@ -32,31 +29,8 @@ export const App = () => {
   //   localStorage.setItem('contacts', JSON.stringify(contacts));
   // }, [contacts]);
 
-  const addContact = ({ name, number }) => {
-    const contact = {
-      id: nanoid(),
-      name,
-      number,
-    };
-    const nameNormalized = name.toLowerCase();
-
-    const uniqueName = contacts.find(
-      contact => contact.name.toLowerCase() === nameNormalized
-    );
-
-    if (uniqueName) {
-      alert(`${name} is already in contacts`);
-    } else {
-      dispatch(addContacts([contact]));
-      //setContacts([...contacts, contact]);
-    }
-  };
-
-  // const deleteContact = contactId => {
-  //   setContacts(contacts.filter(contact => contact.id !== contactId));
-  // };
-
   const changeFilter = evt => {
+    evt.preventDefault();
     dispatch(filterContacts(evt.currentTarget.value));
   };
 
@@ -70,15 +44,15 @@ export const App = () => {
   return (
     <SectionContainer>
       <FormTitle>Phonebook</FormTitle>
-      {/* <ContactForm onSubmit={addContact} /> */}
-      <ContactForm onSubmit={addContact} />
+      <ContactForm />
       <ContactTitle>Contacts</ContactTitle>
-      <Filter value={filter} onChange={changeFilter} />
-      {contacts && (
-        <ContactList
-          contacts={getFilteredContacts()}
-          // onDeleteContact={deleteContact}
-        />
+      {contacts.length !== 0 && (
+        <Filter value={filter} onChange={changeFilter} />
+      )}
+      {contacts.length !== 0 ? (
+        <ContactList contacts={getFilteredContacts()} />
+      ) : (
+        <div>There is no contact.</div>
       )}
     </SectionContainer>
   );
