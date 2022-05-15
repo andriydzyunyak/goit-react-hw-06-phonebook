@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { filterContacts } from '../redux/store';
+import { filterContacts, getFilter, getContacts } from 'redux/contactsSlice';
 import { ContactForm } from 'components/ContactForm/ContactForm';
 import { ContactList } from 'components/ContactList/ContactList';
 import { Filter } from 'components/Filter/Filter';
@@ -10,31 +10,15 @@ import {
 } from 'components/Section.styled';
 
 export const App = () => {
-  const filter = useSelector(state => state.contacts.filter);
-  const contacts = useSelector(state => state.contacts.items);
+  const filter = useSelector(getFilter);
+  const contacts = useSelector(getContacts);
   const dispatch = useDispatch();
 
-  // const [contacts, setContacts] = useState(() => {
-  //   return (
-  //     JSON.parse(localStorage.getItem('contacts')) ?? [
-  //       { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-  //       { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-  //       { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-  //       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-  //     ]
-  //   );
-  // });
-
-  // useEffect(() => {
-  //   localStorage.setItem('contacts', JSON.stringify(contacts));
-  // }, [contacts]);
-
   const changeFilter = evt => {
-    evt.preventDefault();
     dispatch(filterContacts(evt.currentTarget.value));
   };
 
-  const getFilteredContacts = () => {
+  const filteredContacts = () => {
     const filterNormalized = filter.toLowerCase();
     return contacts.filter(contact =>
       contact.name.toLowerCase().includes(filterNormalized)
@@ -50,7 +34,7 @@ export const App = () => {
         <Filter value={filter} onChange={changeFilter} />
       )}
       {contacts.length !== 0 ? (
-        <ContactList contacts={getFilteredContacts()} />
+        <ContactList contacts={filteredContacts()} />
       ) : (
         <div>There is no contact.</div>
       )}
