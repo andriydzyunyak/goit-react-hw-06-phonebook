@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { addContacts, deleteContacts, filterContacts } from '../redux/store';
 import { nanoid } from 'nanoid';
 import { ContactForm } from 'components/ContactForm/ContactForm';
 import { ContactList } from 'components/ContactList/ContactList';
@@ -10,20 +12,25 @@ import {
 } from 'components/Section.styled';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(() => {
-    return (
-      JSON.parse(localStorage.getItem('contacts')) ?? [
-        { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-        { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-        { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-        { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-      ]
-    );
-  });
+  const filter = useSelector(state => state.contacts.filter);
+  const contacts = useSelector(state => state.contacts.items);
+  console.log(contacts);
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
+  // const [contacts, setContacts] = useState(() => {
+  //   return (
+  //     JSON.parse(localStorage.getItem('contacts')) ?? [
+  //       { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+  //       { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+  //       { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+  //       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+  //     ]
+  //   );
+  // });
+
+  // useEffect(() => {
+  //   localStorage.setItem('contacts', JSON.stringify(contacts));
+  // }, [contacts]);
 
   const addContact = ({ name, number }) => {
     const contact = {
@@ -40,17 +47,18 @@ export const App = () => {
     if (uniqueName) {
       alert(`${name} is already in contacts`);
     } else {
-      setContacts([...contacts, contact]);
+      dispatch(addContacts([contact]));
+      //setContacts([...contacts, contact]);
     }
   };
 
-  const deleteContact = contactId => {
-    setContacts(contacts.filter(contact => contact.id !== contactId));
+  // const deleteContact = contactId => {
+  //   setContacts(contacts.filter(contact => contact.id !== contactId));
+  // };
+
+  const changeFilter = evt => {
+    dispatch(filterContacts(evt.currentTarget.value));
   };
-
-  const [filter, setFilter] = useState('');
-
-  const changeFilter = evt => setFilter(evt.currentTarget.value);
 
   const getFilteredContacts = () => {
     const filterNormalized = filter.toLowerCase();
@@ -62,13 +70,16 @@ export const App = () => {
   return (
     <SectionContainer>
       <FormTitle>Phonebook</FormTitle>
+      {/* <ContactForm onSubmit={addContact} /> */}
       <ContactForm onSubmit={addContact} />
       <ContactTitle>Contacts</ContactTitle>
       <Filter value={filter} onChange={changeFilter} />
-      <ContactList
-        contacts={getFilteredContacts()}
-        onDeleteContact={deleteContact}
-      />
+      {contacts && (
+        <ContactList
+          contacts={getFilteredContacts()}
+          // onDeleteContact={deleteContact}
+        />
+      )}
     </SectionContainer>
   );
 };
