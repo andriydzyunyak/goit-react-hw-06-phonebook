@@ -1,5 +1,4 @@
 import { Formik } from 'formik';
-import PropTypes from 'prop-types';
 import * as yup from 'yup';
 import { useAddContacts } from 'redux/contactsSlice';
 import {
@@ -57,8 +56,4 @@ export const ContactForm = () => {
       </PhonebookForm>
     </Formik>
   );
-};
-
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func,
 };

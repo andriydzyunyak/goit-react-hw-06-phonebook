@@ -1,32 +1,36 @@
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteContacts, getFilter, getContacts } from 'redux/contactsSlice';
 import { ContactItem } from 'components/ContactItem/ContactItem';
 import { ContactBook } from 'components/ContactList/ContactList.styled';
-import { useDispatch } from 'react-redux';
-import { deleteContacts } from 'redux/contactsSlice';
+import { Filter } from 'components/Filter/Filter';
 
-export const ContactList = ({ contacts }) => {
+export const ContactList = () => {
+  const filter = useSelector(getFilter);
+  const contacts = useSelector(getContacts);
   const dispatch = useDispatch();
-  return (
-    <ContactBook>
-      {contacts.map(({ id, name, number }) => (
-        <ContactItem
-          key={id}
-          id={id}
-          name={name}
-          number={number}
-          onDelete={() => dispatch(deleteContacts(id))}
-        />
-      ))}
-    </ContactBook>
-  );
-};
 
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.exact({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ),
+  const filteredContacts = () => {
+    const filterNormalized = filter.toLowerCase();
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filterNormalized)
+    );
+  };
+
+  const contactsList = filteredContacts();
+
+  return (
+    <>
+      <Filter />
+      <ContactBook>
+        {contactsList.map(({ id, name, number }) => (
+          <ContactItem
+            key={id}
+            name={name}
+            number={number}
+            onDelete={() => dispatch(deleteContacts(id))}
+          />
+        ))}
+      </ContactBook>
+    </>
+  );
 };
